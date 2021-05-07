@@ -1,0 +1,227 @@
+[
+    {
+        "id": "18d94e8e.b4f791",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "62f9b4a1.a388dc",
+        "type": "inject",
+        "z": "18d94e8e.b4f791",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 100,
+        "y": 180,
+        "wires": [
+            [
+                "25f9bfd2.b48f1"
+            ]
+        ]
+    },
+    {
+        "id": "bce7e037.63368",
+        "type": "xml",
+        "z": "18d94e8e.b4f791",
+        "name": "",
+        "property": "payload",
+        "attr": "",
+        "chr": "",
+        "x": 430,
+        "y": 180,
+        "wires": [
+            [
+                "4cadf18.c3d1d1",
+                "3a94f678.616afa"
+            ]
+        ]
+    },
+    {
+        "id": "25f9bfd2.b48f1",
+        "type": "http request",
+        "z": "18d94e8e.b4f791",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "https://smstestbed.nist.gov/vds/current",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "x": 270,
+        "y": 180,
+        "wires": [
+            [
+                "bce7e037.63368"
+            ]
+        ]
+    },
+    {
+        "id": "18ec790.b2f8f87",
+        "type": "change",
+        "z": "18d94e8e.b4f791",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "nextSequence",
+                "pt": "flow",
+                "to": "payload.MTConnectStreams.Header[0][\"$\"].nextSequence",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 760,
+        "y": 280,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "4cadf18.c3d1d1",
+        "type": "switch",
+        "z": "18d94e8e.b4f791",
+        "name": "",
+        "property": "statusCode",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "btwn",
+                "v": "200",
+                "vt": "num",
+                "v2": "299",
+                "v2t": "num"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 570,
+        "y": 280,
+        "wires": [
+            [
+                "18ec790.b2f8f87",
+                "f87e9549.470428"
+            ]
+        ]
+    },
+    {
+        "id": "a3905c98.4fc7e",
+        "type": "comment",
+        "z": "18d94e8e.b4f791",
+        "name": "\"current\" success",
+        "info": "",
+        "x": 600,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "f87e9549.470428",
+        "type": "function",
+        "z": "18d94e8e.b4f791",
+        "name": "",
+        "func": "let header = msg.payload.MTConnectStreams.Header[0]['$']\n\nlet lastTimestamp = new Date(header.creationTime)\nlet nextSequence = header.nextSequence\nlet deviceStreams = msg.payload.MTConnectStreams.Streams\n\nmsg.lastTimestamp = lastTimestamp\nmsg.nextSequence = nextSequence\nmsg.deviceStreams = deviceStreams\n\nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 730,
+        "y": 340,
+        "wires": [
+            [
+                "76f9a9b0.5f0248",
+                "91e32225.0a93b",
+                "1963da23.f1e616"
+            ]
+        ]
+    },
+    {
+        "id": "76f9a9b0.5f0248",
+        "type": "debug",
+        "z": "18d94e8e.b4f791",
+        "name": "Device Streams",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "deviceStreams",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 900,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "91e32225.0a93b",
+        "type": "debug",
+        "z": "18d94e8e.b4f791",
+        "name": "Last Successful Timestamp",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "lastTimestamp",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 940,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "1963da23.f1e616",
+        "type": "debug",
+        "z": "18d94e8e.b4f791",
+        "name": "Next Sequence",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "nextSequence",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 900,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "3a94f678.616afa",
+        "type": "debug",
+        "z": "18d94e8e.b4f791",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 570,
+        "y": 180,
+        "wires": []
+    }
+]
